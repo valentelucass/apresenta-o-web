@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise de Pacotes de Desenvolvimento Web | Guia Visual</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!-- 
+    Análise do Material de Origem: A fonte é uma proposta de três pacotes (Básico, Profissional, Premium) com preços, recursos e exclusões. O objetivo é vender o pacote Premium como a melhor opção de valor.
+
+    Plano Narrativo da SPA:
+    1.  Introdução: Capturar a atenção e apresentar os pacotes.
+    2.  Comparativo de Custos: Mostrar os preços de forma direta.
+    3.  Análise de Potencial Estratégico & Valor Agregado: Dois gráficos lado a lado para uma comparação completa.
+    4.  O Caminho para o Sucesso: Um fluxograma simples mostrando a jornada do cliente com cada pacote.
+    5.  Detalhes do Pacote Premium: Um gráfico de rosca para detalhar onde está o valor do investimento no pacote principal.
+    6.  Conclusão: Reforçar a mensagem de que o Premium é o investimento mais inteligente.
+
+    Seleção de Visualizações (Confirmado SEM SVG e SEM MERMAID JS):
+    -   Preços: Single Big Number -> Objetivo: Informar. Método: HTML/CSS. Justificativa: Impacto visual imediato.
+    -   Comparativo de Potencial: Horizontal Bar Chart -> Objetivo: Comparar. Biblioteca: Chart.js (Canvas). Justificativa: Comparação clara de múltiplos critérios estratégicos.
+    -   Completude de Recursos: Stacked Bar Chart -> Objetivo: Comparar/Composição. Biblioteca: Chart.js (Canvas). Justificativa: Mostra o valor agregado crescente em cada pacote.
+    -   Caminho do Cliente: Flow Chart -> Objetivo: Organizar/Processo. Método: HTML/CSS com Tailwind. Justificativa: Ilustra a progressão de valor de forma simples.
+    -   Valor do Pacote Premium: Donut Chart -> Objetivo: Composição. Biblioteca: Chart.js (Canvas). Justificativa: Detalha os componentes de valor do pacote principal.
+
+    Paleta de Cores Selecionada: Cosmic Gradient v2 (#2563eb, #9333ea, #f59e0b).
+    
+    Confirmação: Nenhum SVG ou Mermaid JS foi utilizado na geração deste arquivo. A renderização é feita via Canvas (Chart.js) e HTML/CSS (Tailwind).
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            margin-left: auto;
+            margin-right: auto;
+            height: 100%; 
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #00aaff 0%, #6200ff 15%, #ff8800 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 100% 100%;
+        }
+        .flow-arrow {
+            font-size: 2.5rem;
+            line-height: 1;
+            color: #f59e0b; /* Amber 500 */
+        }
+        .azul { color: #00aaff; }
+        .roxo { color: #6200ff; }
+        .laranja { color: #ff8800; }
+        .borda-azul { border-left: 4px solid #00aaff; }
+        .borda-roxo { border-left: 4px solid #6200ff; }
+        .borda-laranja { border-left: 4px solid #ff8800; }
+        .icone-lupa {
+            width: 32px;
+            height: 32px;
+            border: 3px solid currentColor;
+            border-radius: 50%;
+            position: relative;
+            display: inline-block;
+        }
+        .icone-lupa::after {
+            content: '';
+            position: absolute;
+            right: 2px;
+            bottom: 2px;
+            width: 14px;
+            height: 3px;
+            background: currentColor;
+            border-radius: 2px;
+            transform: rotate(45deg);
+        }
+        .icone-cartao {
+            width: 32px;
+            height: 22px;
+            border: 3px solid currentColor;
+            border-radius: 6px;
+            position: relative;
+            display: inline-block;
+        }
+        .icone-cartao::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 5px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            opacity: 0.5;
+        }
+        .icone-cartao::after {
+            content: '';
+            position: absolute;
+            right: 6px;
+            top: 8px;
+            width: 10px;
+            height: 3px;
+            background: currentColor;
+            border-radius: 2px;
+            opacity: 0.7;
+        }
+        .icone-whatsapp {
+            width: 32px;
+            height: 32px;
+            border: 3px solid currentColor;
+            border-radius: 50%;
+            position: relative;
+            display: inline-block;
+        }
+        .icone-whatsapp::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 16px;
+            width: 10px;
+            height: 3px;
+            background: currentColor;
+            border-radius: 2px;
+            transform: rotate(-20deg);
+        }
+        .icone-whatsapp::after {
+            content: '';
+            position: absolute;
+            left: 14px;
+            top: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            border-top: none;
+            border-right: none;
+            background: transparent;
+            transform: rotate(20deg);
+        }
+        /* Ícone monitor (BÁSICO) */
+        .icone-monitor {
+            width: 32px;
+            height: 22px;
+            background: currentColor;
+            border-radius: 4px 4px 2px 2px;
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .icone-monitor::after {
+            content: '';
+            display: block;
+            position: absolute;
+            left: 8px;
+            bottom: -6px;
+            width: 16px;
+            height: 4px;
+            background: currentColor;
+            border-radius: 2px;
+        }
+        /* Ícone engrenagem (PROFISSIONAL) - visual melhorado */
+        .icone-engrenagem {
+            width: 32px;
+            height: 32px;
+            position: relative;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .icone-engrenagem .gear-center {
+            width: 16px;
+            height: 16px;
+            background: currentColor;
+            border-radius: 50%;
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            z-index: 2;
+        }
+        .icone-engrenagem .gear-teeth {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            z-index: 1;
+        }
+        .icone-engrenagem .gear-teeth span {
+            position: absolute;
+            width: 6px;
+            height: 2px;
+            background: currentColor;
+            border-radius: 1px;
+            left: 13px;
+            top: 0;
+            transform-origin: 3px 16px;
+        }
+        .icone-engrenagem .gear-teeth span:nth-child(1) { transform: rotate(0deg) translateY(-2px); }
+        .icone-engrenagem .gear-teeth span:nth-child(2) { transform: rotate(45deg) translateY(-2px); }
+        .icone-engrenagem .gear-teeth span:nth-child(3) { transform: rotate(90deg) translateY(-2px); }
+        .icone-engrenagem .gear-teeth span:nth-child(4) { transform: rotate(135deg) translateY(-2px); }
+        .icone-engrenagem .gear-teeth span:nth-child(5) { transform: rotate(180deg) translateY(-2px); }
+        .icone-engrenagem .gear-teeth span:nth-child(6) { transform: rotate(225deg) translateY(-2px); }
+        .icone-engrenagem .gear-teeth span:nth-child(7) { transform: rotate(270deg) translateY(-2px); }
+        .icone-engrenagem .gear-teeth span:nth-child(8) { transform: rotate(315deg) translateY(-2px); }
+
+        /* Ícone foguete (PREMIUM) - visual melhorado */
+        .icone-foguete {
+            width: 0;
+            height: 0;
+            border-left: 12px solid transparent;
+            border-right: 12px solid transparent;
+            border-bottom: 32px solid currentColor;
+            position: relative;
+            margin-bottom: 8px;
+        }
+        .icone-foguete::before {
+            content: '';
+            position: absolute;
+            left: -6px;
+            top: 18px;
+            width: 12px;
+            height: 12px;
+            background: #fff;
+            border-radius: 50%;
+            z-index: 2;
+        }
+        .icone-foguete::after {
+            content: '';
+            position: absolute;
+            left: 9px;
+            top: 30px;
+            width: 6px;
+            height: 10px;
+            background: #fbbf24;
+            border-radius: 0 0 6px 6px;
+            z-index: 1;
+        }
+        .icone-foguete .window {
+            position: absolute;
+            left: 8px;
+            top: 8px;
+            width: 8px;
+            height: 8px;
+            background: #fff;
+            border-radius: 50%;
+            border: 2px solid currentColor;
+            z-index: 3;
+        }
+    </style>
+    <style>
+        @media print {
+            body {
+                background: #fff !important;
+                color: #222 !important;
+            }
+            .container {
+                padding: 0 !important;
+                margin: 0 auto !important;
+                width: 100% !important;
+                max-width: 100% !important;
+            }
+            main, section, .rounded-xl, .p-8 {
+                background: #fff !important;
+                color: #222 !important;
+                box-shadow: none !important;
+                border: none !important;
+                page-break-inside: avoid !important;
+                page-break-after: always !important;
+                margin-bottom: 0 !important;
+                padding: 32px 24px !important;
+            }
+            section:last-child {
+                page-break-after: auto !important;
+            }
+            header, footer {
+                page-break-after: avoid !important;
+                background: #fff !important;
+                color: #222 !important;
+                box-shadow: none !important;
+                border: none !important;
+            }
+            .chart-container {
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                margin-bottom: 24px !important;
+            }
+            .flow-arrow, .shadow-inner, .transition-all, [style*="box-shadow"] {
+                box-shadow: none !important;
+                filter: none !important;
+                background: none !important;
+            }
+            .bg-gradient-to-br, [style*="linear-gradient"] {
+                background: #fff !important;
+            }
+            .border-4, .border, .border-white, .border-slate-700 {
+                border: none !important;
+            }
+            .rounded-xl, .rounded-lg {
+                border-radius: 0 !important;
+            }
+            .mb-10, .mb-8, .mb-6, .mb-4, .mb-2 {
+                margin-bottom: 16px !important;
+            }
+            .mt-10, .mt-8, .mt-6, .mt-4, .mt-2 {
+                margin-top: 16px !important;
+            }
+            .text-white, .text-slate-300, .text-slate-400, .text-slate-500 {
+                color: #222 !important;
+            }
+            .bg-slate-800, .bg-[#18181B], .bg-[#0F172A] {
+                background: #fff !important;
+            }
+        }
+    </style>
+</head>
+<body style="background-color: #18181B;" class="text-slate-300">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12 md:mb-16">
+            <h1 class="text-4xl md:text-5xl font-black mb-2 gradient-text" style="background: linear-gradient(90deg, #2563eb, #9333ea, #f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                Decida com Confiança
+            </h1>
+            <p class="text-lg md:text-xl text-slate-400 max-w-3xl mx-auto">Um guia visual para escolher o pacote de desenvolvimento web ideal para o seu negócio.</p>
+        </header>
+
+        <main class="space-y-12">
+
+            <section class="text-center p-8 rounded-xl" style="background: linear-gradient(180deg, #232324 0%, #18181B 100%); box-shadow: 0 6px 32px 0 rgba(0,0,0,0.32), 0 1.5px 4px 0 rgba(255,255,255,0.04) inset;">
+                <h2 class="text-2xl font-bold mb-6 text-white">O Investimento Inicial</h2>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div class="border-l-4" style="border-color: #2563EB;" class="p-6 flex flex-col justify-center items-center">
+                        <p class="text-lg text-slate-400">Pacote Básico</p>
+                        <p class="text-4xl font-extrabold" style="color: #2563EB;">R$ 1.800</p>
+                    </div>
+                    <div class="border-l-4" style="border-color: #9333EA;" class="p-6 flex flex-col justify-center items-center">
+                        <p class="text-lg text-slate-400">Pacote Profissional</p>
+                        <p class="text-4xl font-extrabold" style="color: #9333EA;">R$ 3.200</p>
+                    </div>
+                    <div class="border-l-4" style="border-color: #F59E0B;" class="p-6 flex flex-col justify-center items-center">
+                        <p class="text-lg text-slate-400">Pacote Premium</p>
+                        <p class="text-4xl font-extrabold" style="color: #F59E0B;">R$ 4.997</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+                <div class="p-8 rounded-xl flex flex-col" style="background: linear-gradient(180deg, #232324 0%, #18181B 100%); box-shadow: 0 6px 32px 0 rgba(0,0,0,0.32), 0 1.5px 4px 0 rgba(255,255,255,0.04) inset;">
+                    <h2 class="text-2xl font-bold text-center mb-2 text-white">Análise de Potencial Estratégico</h2>
+                    <p class="text-center text-slate-400 mb-6 text-sm">Compare os ganhos em áreas cruciais. O gráfico mostra como cada pacote se posiciona em personalização, conversão, e mais.</p>
+                    <div class="chart-container flex-grow min-h-[400px]">
+                        <canvas id="potentialChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="p-8 rounded-xl flex flex-col" style="background: linear-gradient(180deg, #232324 0%, #18181B 100%); box-shadow: 0 6px 32px 0 rgba(0,0,0,0.32), 0 1.5px 4px 0 rgba(255,255,255,0.04) inset;">
+                    <h2 class="text-2xl font-bold text-center mb-2 text-white">Visualização de Valor Agregado</h2>
+                     <p class="text-center text-slate-400 mb-6 text-sm">Visualize o valor agregado. O gráfico ilustra a quantidade e qualidade dos benefícios em cada pacote.</p>
+                    <div class="chart-container flex-grow min-h-[400px]">
+                        <canvas id="featureValueChart"></canvas>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="p-8 rounded-xl" style="background: linear-gradient(180deg, #232324 0%, #18181B 100%); box-shadow: 0 6px 32px 0 rgba(0,0,0,0.32), 0 1.5px 4px 0 rgba(255,255,255,0.04) inset;">
+                <h2 class="text-2xl font-bold text-center mb-4 text-white">O Caminho para o Sucesso do seu Negócio</h2>
+                <p class="text-center text-slate-400 mb-8 max-w-2xl mx-auto">Cada pacote representa um estágio na jornada digital da sua marca. Veja como sua empresa evolui.</p>
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                    <div class="flex items-center gap-4 w-80 justify-center">
+                        <svg width="48" height="48" fill="none" stroke="#2563EB" stroke-width="2"><rect x="8" y="14" width="32" height="18" rx="3" /></svg>
+                        <div class="flex flex-col justify-center">
+                          <h3 class="font-bold text-xl" style="color: #2563EB;">BÁSICO</h3>
+                          <p class="text-slate-400 text-base">Presença Online</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow transform rotate-90 md:rotate-0">→</div>
+                    <div class="flex items-center gap-4 w-80 justify-center">
+                        <svg width="48" height="48" fill="none" stroke="#9333EA" stroke-width="2"><circle cx="24" cy="24" r="12" /><g><line x1="24" y1="5" x2="24" y2="13"/><line x1="24" y1="35" x2="24" y2="43"/><line x1="5" y1="24" x2="13" y2="24"/><line x1="35" y1="24" x2="43" y2="24"/><line x1="11" y1="11" x2="17" y2="17"/><line x1="37" y1="37" x2="31" y2="31"/><line x1="11" y1="37" x2="17" y2="31"/><line x1="37" y1="11" x2="31" y2="17"/></g></svg>
+                        <div class="flex flex-col justify-center">
+                          <h3 class="font-bold text-xl" style="color: #9333EA;">PROFISSIONAL</h3>
+                          <p class="text-slate-400 text-base">Impacto e Organização</p>
+                        </div>
+                    </div>
+                    <div class="flow-arrow transform rotate-90 md:rotate-0">→</div>
+                    <div class="flex items-center gap-4 w-80 justify-center bg-gradient-to-br from-[#f59e0b] to-[#fbbf24] rounded-lg p-2 border-4 border-white shadow-inner">
+                        <svg width="48" height="48" fill="none" stroke="#fff" stroke-width="2"><path d="M24 6C30 14 34 24 24 44C14 24 18 14 24 6Z" fill="#fff"/><circle cx="24" cy="18" r="3" fill="#f59e0b"/><rect x="21" y="38" width="6" height="8" rx="3" fill="#fbbf24"/></svg>
+                        <div class="flex flex-col justify-center">
+                          <h3 class="font-bold text-xl text-white">PREMIUM</h3>
+                          <p class="font-semibold text-white text-base">Vendas e Liderança</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="p-8 rounded-xl" style="background: linear-gradient(180deg, #232324 0%, #18181B 100%); box-shadow: 0 6px 32px 0 rgba(0,0,0,0.32), 0 1.5px 4px 0 rgba(255,255,255,0.04) inset;">
+                <h2 class="text-2xl font-bold text-center mb-2 text-white">O Valor Exclusivo do Pacote Premium</h2>
+                <p class="text-center text-slate-400 mb-6 max-w-2xl mx-auto">O valor do Premium está nos recursos estratégicos. Este gráfico detalha onde seu investimento trabalha para você.</p>
+                <div class="chart-container mx-auto mb-10" style="height: 320px; max-height: 400px;">
+                    <canvas id="premiumValueChart"></canvas>
+                </div>
+            </section>
+
+        </main>
+
+        <footer class="text-center mt-12 py-6 border-t border-slate-700">
+            <p class="text-slate-500">Análise visual para uma decisão inteligente.</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const textColor = '#cbd5e1'; // slate-300
+            const gridColor = 'rgba(203, 213, 225, 0.1)';
+
+            // New Saturated Palette
+            const colorBlue = '#00aaff';   // azul global
+            const colorPurple = '#6200ff'; // roxo global
+            const colorAmber = '#ff8800';  // laranja global
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                }
+                return label;
+            };
+            
+            // Função para gradiente dinâmico
+            function getBarGradient(ctx, colorStart, colorEnd, isHorizontal = false) {
+                const width = ctx.canvas.width;
+                const height = ctx.canvas.height;
+                let gradient;
+                if (isHorizontal) {
+                    gradient = ctx.createLinearGradient(0, 0, width, 0);
+                } else {
+                    gradient = ctx.createLinearGradient(0, 0, 0, height);
+                }
+                gradient.addColorStop(0, colorStart);
+                gradient.addColorStop(1, colorEnd);
+                return gradient;
+            }
+
+            // Gráfico de Potencial Estratégico (horizontal)
+            const potentialCtx = document.getElementById('potentialChart').getContext('2d');
+            new Chart(potentialCtx, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'Personalização Visual', 
+                        'Foco em Conversão', 
+                        'Prova Social (Confiança)', 
+                        'Suporte e Acompanhamento', 
+                        'Estrutura e Escalabilidade'
+                    ],
+                    datasets: [
+                        {
+                            label: 'Básico',
+                            data: [1, 1, 0, 1, 1],
+                            backgroundColor: (ctx) => getBarGradient(ctx.chart.ctx, '#00aaff', '#2563eb', true),
+                        },
+                        {
+                            label: 'Profissional',
+                            data: [3, 2, 0, 2, 3],
+                            backgroundColor: (ctx) => getBarGradient(ctx.chart.ctx, '#6200ff', '#9333ea', true),
+                        },
+                        {
+                            label: 'Premium',
+                            data: [5, 5, 5, 5, 5],
+                            backgroundColor: (ctx) => getBarGradient(ctx.chart.ctx, '#ff8800', '#f59e0b', true),
+                        }
+                    ]
+                },
+                options: {
+                   indexAxis: 'y',
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: { position: 'top', labels: { color: textColor } },
+                       tooltip: { callbacks: { title: tooltipTitleCallback } }
+                   },
+                   scales: {
+                       x: {
+                           beginAtZero: true,
+                           title: { display: true, text: 'Pontuação de Potencial (1-5)', color: textColor },
+                           ticks: { color: textColor },
+                           grid: { color: gridColor }
+                       },
+                       y: {
+                           ticks: { color: textColor, font: {size: 10} },
+                           grid: { color: gridColor }
+                       }
+                   }
+                }
+            });
+
+            // Gráfico de Valor Agregado (vertical)
+            const featureValueCtx = document.getElementById('featureValueChart').getContext('2d');
+            new Chart(featureValueCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['Básico', 'Profissional', 'Premium'],
+                    datasets: [
+                        {
+                            label: 'Recursos Essenciais',
+                            data: [3, 3, 3],
+                            backgroundColor: (ctx) => getBarGradient(ctx.chart.ctx, '#00aaff', '#2563eb', false),
+                        },
+                        {
+                            label: 'Recursos de Design e UX',
+                            data: [0, 2, 4],
+                            backgroundColor: (ctx) => getBarGradient(ctx.chart.ctx, '#6200ff', '#9333ea', false),
+                        },
+                        {
+                            label: 'Recursos de Estratégia e Crescimento',
+                            data: [0, 0, 5],
+                            backgroundColor: (ctx) => getBarGradient(ctx.chart.ctx, '#ff8800', '#f59e0b', false),
+                        }
+                    ]
+                },
+                options: {
+                   responsive: true,
+                   maintainAspectRatio: false,
+                   plugins: {
+                       legend: { position: 'top', labels: { color: textColor } },
+                       tooltip: { callbacks: { title: tooltipTitleCallback } }
+                   },
+                   scales: {
+                       x: { 
+                           stacked: true,
+                           ticks: { color: textColor },
+                           grid: { color: gridColor }
+                        },
+                       y: {
+                           stacked: true,
+                           title: { display: true, text: 'Pontuação de Valor Agregado', color: textColor },
+                           ticks: { color: textColor },
+                           grid: { color: gridColor }
+                       }
+                   }
+                }
+            });
+
+            const premiumValueCtx = document.getElementById('premiumValueChart').getContext('2d');
+            new Chart(premiumValueCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: [
+                        'Identidade Visual Sob Medida', 
+                        'Estratégia de Conversão Aplicada', 
+                        'Suporte e Acompanhamento (90 dias)', 
+                        'Estrutura Preparada para Expansões',
+                        'Prova Social (Depoimentos e Mapa)'
+                    ],
+                    datasets: [{
+                        label: 'Valor do Pacote Premium',
+                        data: [25, 30, 20, 15, 10],
+                        backgroundColor: [colorAmber, colorPurple, colorBlue, '#c084fc', '#60a5fa'], // purple-400, blue-400
+                        hoverOffset: 4,
+                        borderColor: '#1e293b' // slate-800 for separation
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                       legend: {
+                           position: 'bottom',
+                           labels: { 
+                               color: textColor,
+                               padding: 15, 
+                               font: { size: 11 },
+                               boxWidth: 20,
+                               usePointStyle: true
+                           }
+                       },
+                       tooltip: { callbacks: { title: tooltipTitleCallback } }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
